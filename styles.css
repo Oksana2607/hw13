@@ -6,7 +6,7 @@
 
 body {
     margin: 3em;
-    font-size: 1em;
+    font-size: 20px;
     color: #333333;
     height: 100%;
     font-family: 'Open Sans', sans-serif;
@@ -49,17 +49,15 @@ h1 {
     min-width: 460px;
 }
 
-.users__table-header {
+.table__header {
     background-color: #2937ff;
-    font-size: 1.5em;
     font-style: italic;
     font-weight: bold;
     color: #ffffff;
     text-align: left;
 }
 
-.users__table-body {
-    font-size: 1em;
+.table__body {
     background-color: #eee;
 }
 
@@ -79,10 +77,11 @@ td, th {
     padding: 0.5em 0.5em;
     color: #ffffff;
     background-color: #2937ff;
-    font-size: 1.5em;
+    font-size: 20px;
     width: 6em;
     height: 2.3em;
     font-style: italic;
+    cursor: pointer;
 }
 
 #name,
@@ -96,7 +95,6 @@ td, th {
     padding: 0.5em 0.5em;
     color: #ffffff;
     background-color: #2937ff;
-    font-size: 1.5em;
     width: 6em;
     height: 2.3em;
     font-style: italic;

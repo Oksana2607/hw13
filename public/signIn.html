@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="import" href="./header.html">
+<body>
+<div class="container" id="container">
+    <div class="container__button button" action="#">
+        <button class="button__log-in" onclick="location.href='Index.html'">Log In</button>
+        <button class="button__sign-in" onclick="location.href='./signIn.html'">Sign In</button>
+    </div>
+
+<form id="signIn" class="form__sing-in" >
+    <div class="form__sing-in sign-in">
+        <div class="sign-in__Name">
+            <label for="name">name</label>
+            <input type="text" id="name" placeholder="Name" required>
+        </div>
+
+        <div class="sign-in__Email">
+            <label for="email">e-mail</label>
+            <input type="email" id="email" placeholder="Email" required>
+        </div>
+
+        <div class="sign-in__password">
+            <label for="password">password</label>
+            <input type="password" id="password" placeholder="Password" required>
+        </div>
+
+        <div class="sign-in__confirmPassword">
+            <label for="confirm_password">confirm password</label>
+            <input type="password" id="confirm_password" placeholder="Confirm Password" required>
+        </div>
+        <div class="form__buttonSubmit buttonSubmit">
+            <button class="buttonSubmit__sign-in" onclick="signIn()" type="submit">Submit</button>
+        </div>
+    </div>
+</form>
+</div>
+</body>
+<link rel="import" href="./footer.html">
+</html>

@@ -1,0 +1,167 @@
+* {
+    margin: 0px auto;
+    padding: 0px;
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+}
+
+body {
+    background-image: url(http://wallpapers-image.ru/1920x1080/mountains/wallpapers/mountains-wallpapers-1920x1080-00019.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: 'Montserrat', sans-serif;
+    height: 100vh;
+    margin: -20px 0 50px;
+    overflow:  hidden;
+}
+p{
+    margin: 0;
+    padding: 0;
+}
+.container{
+    height: 200px;
+    background: linear-gradient(45deg, #eed975, #ff94f6);
+    background-color: #fff;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    width: 768px;
+    max-width: 400px;
+    min-height: 400px;
+}
+.container__form{
+    background-color: #f0c7ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 50px;
+    height: 100%;
+    text-align: center;
+}
+
+.container__button{
+    margin-bottom: 15px;
+    padding: 15px;
+}
+.form__buttonSubmit{
+    margin-top: 15px;
+}
+.buttonSubmit__log-in{
+    outline: none;
+    border-radius: 20px;
+    border: 1px solid #110501;
+    background-color: #2937ff;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 12px 45px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.buttonSubmit__sign-in{
+    outline: none;
+    border-radius: 20px;
+    border: 1px solid #110501;
+    background-color: #2937ff;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 12px 45px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.buttonSubmit__sign-in:focus{
+    border-color: #ff201e;
+}
+.buttonSubmit__log-in:focus{
+    border-color: #ff201e;
+}
+
+.button__log-in {
+    outline: none;
+    border-radius: 20px;
+    border: 1px solid #110501;
+    background-color: #2937ff;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 12px 45px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+
+}
+.button__sign-in {
+    outline: none;
+    border-radius: 20px;
+    border: 1px solid #110501;
+    background-color: #2937ff;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 12px 45px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.button__log-in:focus {
+    background-color: #ff201e;
+}
+.button__sign-in:focus {
+    background-color: #ff201e;
+}
+
+.sing-in {
+    clear: both;
+    text-align: right;
+    line-height:25px;
+}
+label{
+    float: bottom;
+    cursor: pointer;
+    margin-left: fill ;
+}
+input{
+    outline: none;
+    margin-top: 10px;
+    height: 17px;
+    width: 200px;
+    border-radius: 20px/20px;
+    border: none;
+    padding-left: 15px;
+    font-size: 18px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.82);
+}
+input:focus {
+    border: solid #4032ff;
+
+}
+#signIn{
+    display: block;
+}
+
+#logIn{
+    display: block;
+}
+
+#signIn:focus {
+
+}
+/*#logIn:checked~#signIn {*/
+/*    display:block*/
+/*}*/
+/*signIn:checked~#logIn {*/
+/*    display:none*/
+/*}*/
+
+
+
+
+
+
+

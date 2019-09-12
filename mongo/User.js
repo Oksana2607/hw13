@@ -10,6 +10,9 @@ const User = new Schema({
     },
     password: {
         type: String
+    },
+    isActive: {
+        type: Boolean
     }
 },{
     collection: 'users'

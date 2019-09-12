@@ -1,7 +1,6 @@
 {
   "name": "hw13",
   "version": "1.0.0",
-  "description": "",
   "main": "server_mongo.js",
   "dependencies": {
     "body-parser": "^1.19.0",
@@ -26,5 +25,6 @@
   "bugs": {
     "url": "https://github.com/Oksana2607/hw13/issues"
   },
-  "homepage": "https://github.com/Oksana2607/hw13#readme"
+  "homepage": "https://github.com/Oksana2607/hw13#readme",
+  "description": ""
 }

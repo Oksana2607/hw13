@@ -30,8 +30,6 @@ MessageRoute.route('/getMessages').get((req, res) => {
         }
         console.log('find', doc);
     });
-
-
 });
 
 module.exports = MessageRoute;

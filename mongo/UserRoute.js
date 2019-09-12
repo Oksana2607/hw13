@@ -60,7 +60,7 @@ UserRoute.route('/logout').post((req, res) => {
 });
 
 
-UserRoute.route('/getUsers').get((req, res) => {
+UserRoute.route('/getActiveUsers').get((req, res) => {
 
     User.find({isActive: true}).then(function (doc) {
         if (doc) {
@@ -70,8 +70,18 @@ UserRoute.route('/getUsers').get((req, res) => {
         }
         console.log('find', doc);
     });
+});
 
+UserRoute.route('/getUsers').get((req, res) => {
 
+    User.find().then(function (doc) {
+        if (doc) {
+            res.json(doc);
+        } else {
+            res.sendStatus(401);
+        }
+        console.log('find', doc);
+    });
 });
 
 module.exports = UserRoute;

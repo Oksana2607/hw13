@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const Message = new Schema({
-    message: {
+    text: {
         type: String
     },
     user: {

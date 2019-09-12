@@ -1,28 +1,28 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
-const db = require('./mongo/db');
 const WebSocket = require('ws');
 const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 3000;
 const config = require('./mongo/config');
 const UserRoute = require('./mongo/UserRoute');
 const MessageRoute = require('./mongo/MessageRoute');
+const Message = require('./mongo/Message');
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 
-mongoose.connect(config.DB, { useNewUrlParser: true })
+mongoose.connect(config.DB, {useNewUrlParser: true})
     .then(() => {
-        console.log('Database is connected')
+            console.log('Database is connected')
         },
-    err => {
-        console.log('Can not connect to the database'+ err)
-    }
-);
+        err => {
+            console.log('Can not connect to the database' + err)
+        }
+    );
 
 app.listen(PORT, () => {
-    console.log('Server is running on PORT:',PORT);
+    console.log('Server is running on PORT:', PORT);
 });
 
 app.use('/user', UserRoute);
@@ -42,24 +42,37 @@ const handleMessage = (message, ws) => {
     switch (data.type) {
         case "USER_MESSAGE":
             server.broadcast(JSON.stringify({...data, time: time}), ws);
+
+            const message = new Message({...data});
+            message.save();
             break;
         case "CLOSE":
-            if (!ws.userData) return;
-            this.removeUser(ws.userData._id);
-            server.broadcast(JSON.stringify({
-                type: 'SERVER_MESSAGE',
-                text: `${ws.userData.name} left chat`,
-                time: time
-            }), ws);
-            server.broadcast(JSON.stringify({
-                type: 'USERS_LIST',
-                usersList: this.usersList,
-                time: time
-            }), ws);
+            // if (!ws.userData) return;
+            // this.removeUser(ws.userData._id);
+            // server.broadcast(JSON.stringify({
+            //     type: 'SERVER_MESSAGE',
+            //     text: `${ws.userData.name} left chat`,
+            //     time: time
+            // }), ws);
+            // server.broadcast(JSON.stringify({
+            //     type: 'USERS_LIST',
+            //     usersList: this.usersList,
+            //     time: time
+            // }), ws);
             break;
         default:
             return;
     }
+};
+
+const handleOnConnect = ws => {
+    Message.find().sort({'time': -1}).limit(5).then(function (doc) {
+        if (doc) {
+            doc.forEach(message => {
+                ws.send(JSON.stringify(message));
+            });
+        }
+    });
 };
 
 // Broadcast to all
@@ -79,15 +92,17 @@ server.on('connection', ws => {
         time: new Date()
     }));
 
+    handleOnConnect(ws);
+
     ws.on('message', message => {
         handleMessage(message, ws);
-
     });
 
     ws.on('close', () => {
         const message = JSON.stringify({
             type: 'CLOSE',
         });
+
         handleMessage(message, ws);
     });
 });

@@ -3,6 +3,7 @@ let ws;
 const store = {
     user: '',
     messages: '',
+    allUsers: '',
     activeUsers: '',
     isActive: ''
 };
@@ -65,18 +66,12 @@ class View {
 
     renderChatUsers = (users) => {
         const usersHeader = `Users online:`;
-        let usersList;
-        for (let i = 0; i < users.length; i++) {
-            if (users[i].isActive) {
-                const activeUsers = [];
-                activeUsers.push(users[i]);
-                usersList = activeUsers.map(user => {
-                    return `<div class="users-chat__users">
+
+        const usersList = users.map(user => {
+            return `<div class="users-chat__users">
                     <li class="users-chat">${user.name}</li>                    
                 </div>`
-                });
-            }
-        }
+        });
 
         return this.usersChat.innerHTML = usersHeader + usersList.join('');
     };
@@ -89,7 +84,7 @@ class View {
         let div = document.createElement('div');
         div.innerHTML = document.getElementById('message').value;
         document.getElementById('chatContent').appendChild(div);
-    }
+    };
 
     insertSocketMessage = message => {
         let div = document.createElement('div');
@@ -100,7 +95,6 @@ class View {
             div.innerHTML = message.text;
             document.getElementById('chatContent').appendChild(div);
         }
-
     }
 }
 
@@ -110,7 +104,7 @@ class App {
     }
 
     init() {
-        const _user = localStorage.getItem('user');
+        const _user = sessionStorage.getItem('user');
 
         if (_user !== 'null') {
             store.user = JSON.parse(_user);
@@ -118,29 +112,22 @@ class App {
             this.view.email.innerHTML += store.user.email;
         }
 
-        const _message = localStorage.getItem('message');
+        const _message = sessionStorage.getItem('message');
 
         if (_message !== 'null') {
             store.messages = JSON.parse(_message);
         }
 
+        this.initUsers();
+
         const method = event => {
             switch(event.target.id) {
                 case 'usersBtn':
-                    sendRequest()
-                        .then(res => res.json())
-                        .then(response => {
-                            store.activeUsers = response;
-                            this.view.renderUsers(store.activeUsers);
-                            this.view.renderWithoutChatUsers();
-                        })
-                        .catch(error => {
-                            console.log(error);
-                        });
+                    this.initUsers();
                     break;
                 case 'chatBtn':
                     this.view.renderChat();
-                    this.view.renderChatUsers(store.activeUsers);
+                    this.initActiveUsers();
                     this.initWs();
                     break;
                 case 'sendBtn':
@@ -153,14 +140,45 @@ class App {
                     };
                     sendMessage(message);
                     document.getElementById('message').value = '';
+                    break;
                 case 'logoutBtn':
                     sendLogoutRequest();
+                    break;
                 default:
                     return;
             }
         };
 
         document.addEventListener('click', method);
+
+        window.onbeforeunload = function () {
+            sendLogoutRequest();
+        };
+    }
+
+    initUsers() {
+        sendRequest('getUsers')
+            .then(res => res.json())
+            .then(response => {
+                store.allUsers = response;
+                this.view.renderUsers(store.allUsers);
+                this.view.renderWithoutChatUsers();
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
+    initActiveUsers() {
+        sendRequest('getActiveUsers')
+            .then(res => res.json())
+            .then(response => {
+                store.activeUsers = response;
+                this.view.renderChatUsers(store.activeUsers);
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }
 
     initWs() {
@@ -185,8 +203,8 @@ class App {
     }
 }
 
-function sendRequest() {
-    const url = 'http://localhost:3000/user/getUsers';
+function sendRequest(param) {
+    const url = `http://localhost:3000/user/${param}`;
 
     return fetch(url, {
         method: 'GET',
@@ -217,7 +235,7 @@ const sendLogoutRequest = () => {
         }
     }).then(res => res.json())
         .then(response => {
-            localStorage.clear();
+            sessionStorage.clear();
             store.user ={};
             location.href='index.html';
         })

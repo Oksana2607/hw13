@@ -76,10 +76,22 @@ h1 {
     flex-direction: column;
 }
 
-.chat__content{
+.chat__content {
     flex: 1;
     display: flex;
     flex-direction: column;
+    padding: 10px 30px;
+    overflow-y: auto;
+}
+
+.outgoing {
+    padding: 5px;
+    text-align: right;
+}
+
+.incoming {
+    padding: 5px;
+    text-align: left;
 }
 
 .chat__footer {
@@ -174,3 +186,4 @@ li {
 .users-chat li {
     font-size: 0.8em;
 }
+

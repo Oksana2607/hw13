@@ -1,13 +1,35 @@
+class Store {
+    constructor() {
+        this._user = {};
+        this._allUsers = [];
+        this._activeUsers = [];
+        this._isActive = '';
+    }
 
+    addUser(user) {
+        this._allUsers.push(user);
+    }
+
+    getUsers() {
+        return this._allUsers;
+    }
+
+    addActiveUser(user) {
+        this._activeUsers.push(user);
+    }
+
+    getActiveUsers() {
+        return this._activeUsers
+    }
+}
 let ws;
-const store = {
-    user: '',
-    messages: '',
-    allUsers: '',
-    activeUsers: '',
-    isActive: ''
-};
-
+// const store = {
+//     user: '',
+//     // messages: '',
+//     allUsers: '',
+//     activeUsers: '',
+//     isActive: ''
+// };
 
 class View {
     constructor() {
@@ -55,7 +77,9 @@ class View {
         return this.changeTable.innerHTML = `<div class="users__chat chat" id="chat">
                 <div class="chat__title">Chat</div>
                 <div class="chat__body" >
-                    <div class="chat__content" id="chatContent"></div>
+                    <div class="chat__content" id="chatContent">
+                        <div class="chat__content chat" id="chatContent"></div>
+                    </div>
                     <div class="chat__footer">
                         <input class="chat__input" id="message" type="text">
                         <button class="chat__button" id="sendBtn">Send</button>
@@ -82,12 +106,14 @@ class View {
 
     insertMessage = () => {
         let div = document.createElement('div');
+        div.className = 'outgoing';
         div.innerHTML = document.getElementById('message').value;
         document.getElementById('chatContent').appendChild(div);
     };
 
     insertSocketMessage = message => {
         let div = document.createElement('div');
+        div.className = 'incoming';
         if (message.user) {
             div.innerHTML = `${message.user}: ${message.text}`;
             document.getElementById('chatContent').appendChild(div);
@@ -153,6 +179,7 @@ class App {
 
         window.onbeforeunload = function () {
             sendLogoutRequest();
+            this.view.renderChatUsers();
         };
     }
 
@@ -199,6 +226,11 @@ class App {
 
         ws.onclose = () => {
             console.log('onclose');
+            sendMessage({
+                type: 'CLOSE',
+                text: store.user.name + ' left',
+                time: new Date()
+            });
         };
     }
 }
@@ -236,7 +268,7 @@ const sendLogoutRequest = () => {
     }).then(res => res.json())
         .then(response => {
             sessionStorage.clear();
-            store.user ={};
+            store.user = {};
             location.href='index.html';
         })
         .catch(error => {
@@ -244,6 +276,7 @@ const sendLogoutRequest = () => {
         });
 };
 
+const store = new Store();
 const app = new App();
 app.init();
 

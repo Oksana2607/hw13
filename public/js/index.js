@@ -27,6 +27,7 @@ const sendRequest = () => {
 
 document.getElementById('submitBtn').addEventListener('click', event => {
     event.preventDefault();
+
     sendRequest();
 });
 
@@ -34,31 +35,11 @@ const handleError = error => {
     document.getElementById('error').innerText = `Error: Unauthorized`;
 };
 
-// const ws = new WebSocket('ws://localhost:4000');
-//
-// const sendMessage = (data) => {
-//     ws.send(JSON.stringify(data));
-// };
-//
-// ws.onopen = () => {
-//     console.log('onopen');
-//     sendMessage('hello from front end');
-// };
-//
-// ws.onmessage = message => {
-//    console.log('message', message.data);
-//
-// };
-//
-// ws.onclose = () => {
-//     console.log('onclose');
-// };
-//
-//
-// setInterval(() => sendMessage(
-//     {
-//         type: 'USER_MESSAGE',
-//         text: 'from user!',
-//         time: new Date()
-//     }
-// ), 5000);
+function validatePassword() {
+    if (password.value !== confirm_password.value) {
+        confirm_password.setCustomValidity("Passwords do not match");
+    } else {
+        confirm_password.setCustomValidity('Access');
+
+    }
+}

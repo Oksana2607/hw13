@@ -19,11 +19,16 @@ const sendRequest = () => {
             sessionStorage.setItem('user', JSON.stringify(response));
             location.href='users.html';
         })
-        .catch(error => console.error('Ошибка:', error));
+        .catch(error => {
+            handleError(error);
+        });
 };
-
 
 document.getElementById('submitBtnSignIn').addEventListener('click', event => {
     event.preventDefault();
     sendRequest();
 });
+
+const handleError = error => {
+    document.getElementById('error').innerText = `Error: User exists`;
+};

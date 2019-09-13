@@ -47,18 +47,7 @@ const handleMessage = (message, ws) => {
             message.save();
             break;
         case "CLOSE":
-            // if (!ws.userData) return;
-            // this.removeUser(ws.userData._id);
-            // server.broadcast(JSON.stringify({
-            //     type: 'SERVER_MESSAGE',
-            //     text: `${ws.userData.name} left chat`,
-            //     time: time
-            // }), ws);
-            // server.broadcast(JSON.stringify({
-            //     type: 'USERS_LIST',
-            //     usersList: this.usersList,
-            //     time: time
-            // }), ws);
+            server.broadcast(JSON.stringify({...data, time: time}), ws);
             break;
         default:
             return;
@@ -101,6 +90,8 @@ server.on('connection', ws => {
     ws.on('close', () => {
         const message = JSON.stringify({
             type: 'CLOSE',
+            text: `By!`,
+            time: new Date()
         });
 
         handleMessage(message, ws);

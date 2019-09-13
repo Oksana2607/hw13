@@ -16,13 +16,43 @@ UserRoute.route('/signIn').post((req, res) => {
 
     const user = new User(newUser);
 
-    user.save()
-        .then(user => {
-            res.json(user);
-        })
-        .catch(err => {
-            res.status(400).send("unable to save to database");
-        });
+    const {email, password} = req.body;
+
+    User.findOne({email: email}).then(function (doc) {
+        if (doc) {
+            res.sendStatus(401);
+        } else {
+            user.save()
+                .then(user => {
+                    res.json(user);
+                })
+                .catch(err => {
+                    res.status(400).send("unable to save to database");
+                });
+        }
+        console.log('findOne', doc);
+    });
+
+    // if (result) {
+    //     res.json({message: 'User exist'})
+    // } else {
+    //     user.save()
+    //         .then(user => {
+    //             res.json(user);
+    //         })
+    //         .catch(err => {
+    //             res.status(400).send("unable to save to database");
+    //         });
+    // }
+
+
+    // user.save()
+    //     .then(user => {
+    //         res.json(user);
+    //     })
+    //     .catch(err => {
+    //         res.status(400).send("unable to save to database");
+    //     });
 });
 
 UserRoute.route('/login').post((req, res) => {
@@ -38,7 +68,7 @@ UserRoute.route('/login').post((req, res) => {
         } else {
             res.sendStatus(401);
         }
-        console.log('findOne', doc);
+        console.log('findAndUpdate', doc);
     });
 });
 
@@ -73,7 +103,6 @@ UserRoute.route('/getActiveUsers').get((req, res) => {
 });
 
 UserRoute.route('/getUsers').get((req, res) => {
-
     User.find().then(function (doc) {
         if (doc) {
             res.json(doc);

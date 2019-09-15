@@ -113,12 +113,12 @@ class View {
     insertMessage = () => {
         let div = document.createElement('div');
         div.className = 'outgoing';
-        div.innerHTML = document.getElementById('message').value;
+        div.innerHTML = `Me : ${document.getElementById('message').value}`;
         document.getElementById('chatContent').appendChild(div);
     };
 
     insertSocketMessage = message => {
-        console.log(message);
+        console.log(message, 55);
         let div = document.createElement('div');
         if (message.sender === 'SYSTEM_MESSAGE'){
             div.className = 'system-message';
@@ -126,7 +126,7 @@ class View {
             document.getElementById('chatContent').appendChild(div);
         }else if(store.user.name === message.sender){
             div.className = 'outgoing';
-            div.innerHTML = `${message.text}`;
+            div.innerHTML = `Me : ${message.text}`;
             document.getElementById('chatContent').appendChild(div);
         }else if(!message.sender){
             div.className = 'system-message';
@@ -180,11 +180,13 @@ class App {
                     break;
                 case 'sendBtn':
                     this.view.insertMessage();
+                    console.log(store.user.name, document.getElementById('message').value)
                     let message = {
                         type: "USER_MESSAGE",
                         text: document.getElementById('message').value,
                         user: store.user.name,
-                        time: new Date()
+                        sender: store.user.name,
+                        time: new Date(),
                     };
                     // console.log(message, 1);
                     sendMessage(message);
@@ -245,7 +247,7 @@ class App {
         };
 
         ws.onmessage = message => {
-            // console.log(message);
+            // console.log(message, 44);
             handleMessage(message);
         };
 
@@ -278,7 +280,7 @@ const sendMessage = (data) => {
 
 const handleMessage = message => {
     let _message = JSON.parse(message.data);
-    // console.log(_message);
+    // console.log(_message, 33);
     app.view.insertSocketMessage(_message);
 };
 

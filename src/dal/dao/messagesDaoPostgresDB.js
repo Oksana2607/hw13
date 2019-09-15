@@ -39,7 +39,7 @@ MessagesDaoPostgresDB.prototype.readByReceiver = async function (ws) {
     let validate = await this.pool.query('SELECT * FROM message ORDER BY time');
     // console.log(validate.rows, 5);
     validate.rows.forEach(message => {
-        console.log(message);
+        // console.log(message);
         ws.send(JSON.stringify(message));
     });
 };

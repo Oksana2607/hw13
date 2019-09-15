@@ -1,6 +1,3 @@
-
-
-
 const sendRequest = () => {
     const url = 'http://localhost:3000/user/login';
     const _email = document.getElementById('email_log').value;

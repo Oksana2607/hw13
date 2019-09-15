@@ -1,4 +1,31 @@
+// class Store extends DAO{
+//пишем общий класс с пустыми методами, от которого будем наследоваться и переопределять его методы уже своими для работы со своей базой
 
+class Store{
+    constructor() {
+        this._user = {};
+        this._allUsers = [];
+        this._activeUsers = [];
+        this._isActive = '';
+        this._isActive = '';
+    }
+
+    addUser(user) {
+        this._allUsers.push(user);
+    }
+
+    getUsers() {
+        return this._allUsers;
+    }
+
+    addActiveUser(user) {
+        this._activeUsers.push(user);
+    }
+
+    getActiveUsers() {
+        return this._activeUsers
+    }
+}
 let ws;
 // const store = {
 //     user: '',
@@ -27,11 +54,13 @@ class View {
         this.message = document.getElementById('message');
         this.sendBtn = document.getElementById('sendBtn');
         this.logoutBtn = document.getElementById('logoutBtn');
+        this.usersTable = document.getElementById('usersTable');
+        this.chatTable = document.getElementById('chatTable');
     }
 
     renderUsers = (users) => {
-        console.log(users);
-        const tableHeader = `<div class="users__table" id="usersTable">
+        // console.log(users);
+        const tableHeader = `<div class="users__table">
                     <table class="users__table table" id="table">
                         <tr class="table__header">
                             <th>Name</th>
@@ -47,11 +76,11 @@ class View {
         const tableFooter = `</table>
                 </div>`;
 
-        return this.changeTable.innerHTML = tableHeader + usersList.join('') + tableFooter;
+        return this.usersTable.innerHTML = tableHeader + usersList.join('') + tableFooter;
     };
 
     renderChat = () => {
-        return this.changeTable.innerHTML = `<div class="users__chat chat" id="chat">
+        return this.chatTable.innerHTML = `<div class="users__chat chat" id="chat">
                 <div class="chat__title">Chat</div>
                 <div class="chat__body" >
                     <div class="chat__content" id="chatContent">
@@ -89,13 +118,23 @@ class View {
     };
 
     insertSocketMessage = message => {
+        console.log(message);
         let div = document.createElement('div');
-        div.className = 'incoming';
-        if (message.user) {
-            div.innerHTML = `${message.user}: ${message.text}`;
+        if (message.sender === 'SYSTEM_MESSAGE'){
+            div.className = 'system-message';
+            div.innerHTML = `${message.text}`;
             document.getElementById('chatContent').appendChild(div);
-        } else {
-            div.innerHTML = message.text;
+        }else if(store.user.name === message.sender){
+            div.className = 'outgoing';
+            div.innerHTML = `${message.text}`;
+            document.getElementById('chatContent').appendChild(div);
+        }else if(!message.sender){
+            div.className = 'system-message';
+            div.innerHTML = `${message.text}`;
+            document.getElementById('chatContent').appendChild(div);
+        }else{
+            div.className = 'incoming';
+            div.innerHTML = `${message.sender}: ${message.text}`;
             document.getElementById('chatContent').appendChild(div);
         }
     }
@@ -107,41 +146,50 @@ class App {
     }
 
     init() {
-        let _user = sessionStorage.getItem('user');
-
-        if (_user !== 'null') {
-            _user = JSON.parse(_user);
-            this.view.name.innerHTML = _user.name;
-            this.view.email.innerHTML = _user.email;
+        const _user = sessionStorage.getItem('user');
+        if (_user) {
+            store.user = JSON.parse(_user);
+            this.view.name.innerHTML += store.user.name;
+            this.view.email.innerHTML += store.user.email;
+        }else {
+            location.href = 'index.html'
         }
 
-        // let _message = sessionStorage.getItem('message');
-        //
-        // if (_message !== 'null') {
-        //     _message = JSON.parse(_message);
-        // }
+        const _message = sessionStorage.getItem('message');
+
+        if (_message !== 'null') {
+            store.messages = JSON.parse(_message);
+        }
 
         this.initUsers();
 
+        this.view.renderChat();
+        this.initActiveUsers();
+        this.initWs();
+
         const method = event => {
-            let _user = JSON.parse(sessionStorage.getItem('user'));
             switch(event.target.id) {
                 case 'usersBtn':
                     this.initUsers();
+                    document.getElementById('chatTable').style.display = 'none';
+                    document.getElementById('usersTable').style.display = 'block';
                     break;
                 case 'chatBtn':
-                    this.view.renderChat();
-                    this.initActiveUsers();
-                    this.initWs();
+                    // this.view.renderChat();
+                    // this.initActiveUsers();
+                    document.getElementById('usersTable').style.display = 'none';
+                    document.getElementById('chatTable').style.display = 'block';
+                    // this.initWs();
                     break;
                 case 'sendBtn':
                     this.view.insertMessage();
                     let message = {
                         type: "USER_MESSAGE",
                         text: document.getElementById('message').value,
-                        user: _user.name,
+                        user: store.user.name,
                         time: new Date()
                     };
+                    console.log(message, 1);
                     sendMessage(message);
                     document.getElementById('message').value = '';
                     break;
@@ -165,9 +213,8 @@ class App {
         sendRequest('getUsers')
             .then(res => res.json())
             .then(response => {
-                // store.allUsers = response;
-                store.addUsers(response);
-                this.view.renderUsers(store.getUsers());
+                store.allUsers = response;
+                this.view.renderUsers(store.allUsers);
                 this.view.renderWithoutChatUsers();
             })
             .catch(error => {
@@ -179,8 +226,8 @@ class App {
         sendRequest('getActiveUsers')
             .then(res => res.json())
             .then(response => {
-                store._activeUsers = response;
-                this.view.renderChatUsers(store._activeUsers);
+                store.activeUsers = response;
+                this.view.renderChatUsers(store.activeUsers);
             })
             .catch(error => {
                 console.log(error);
@@ -189,17 +236,19 @@ class App {
 
     initWs() {
         ws = new WebSocket('ws://localhost:4000');
-        let _user = JSON.parse(sessionStorage.getItem('user'));
+
         ws.onopen = () => {
             console.log('onopen');
             sendMessage({
                 type: 'USER_MESSAGE',
-                text: _user.name + ' join',
-                time: new Date()
+                text: store.user.name + ' join',
+                time: new Date(),
+                user: 'SYSTEM_MESSAGE'
             });
         };
 
         ws.onmessage = message => {
+            // console.log(message);
             handleMessage(message);
         };
 
@@ -207,18 +256,19 @@ class App {
             console.log('onclose');
             sendMessage({
                 type: 'CLOSE',
-                text: _user.name + ' left',
-                time: new Date()
+                text: store.user.name + ' left',
+                time: new Date(),
+                user: 'SYSTEM_MESSAGE'
             });
         };
     }
 }
 
 function sendRequest(param) {
-    const url = `http://localhost:3000/user/${param}`;
+    const url = `http://localhost:80/user/${param}`;
 
     return fetch(url, {
-        method: 'GET',
+        method: 'post',
         headers: {
             'Content-Type': 'application/json'
         }
@@ -231,18 +281,16 @@ const sendMessage = (data) => {
 
 const handleMessage = message => {
     let _message = JSON.parse(message.data);
-    console.log(_message);
-    store.addMessage(_message);
+    // console.log(_message);
     app.view.insertSocketMessage(_message);
 };
 
 const sendLogoutRequest = () => {
     const url = 'http://localhost:3000/user/logout';
-    let _user = JSON.parse(sessionStorage.getItem('user'));
 
     fetch(url, {
         method: 'POST',
-        body: JSON.stringify({id: _user._id}),
+        body: JSON.stringify({id: store.user._id}),
         headers:{
             'Content-Type': 'application/json'
         }

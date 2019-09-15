@@ -18,7 +18,7 @@ UserRoute.route('/signIn').post((req, res) => {
 
     const {email, password} = req.body;
 
-    User.findOne({email: email}).then(function (doc) {
+    User.findOne({email: email}, {password: password}).then(function (doc) {
         if (doc) {
             res.sendStatus(401);
         } else {

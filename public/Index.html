@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>LogIn</title>
+<link rel="stylesheet" href="login_signin/style.css">
+<body>
+
+<div class="container" id="container">
+
+    <div class="container__button" action="#">
+        <button class="button__log-in button" onclick="location.href='index.html'">Log In</button>
+        <button class="button__sign-in button" onclick="location.href='signIn.html'">Sign In</button>
+    </div>
+    <form class="container-log-in" id="logIn" onsubmit="return false;">
+        <div class="form__log-in log-in">
+
+            <div class="log-in__Email form_block">
+                <label for="email_log" class="input-label">e-mail</label>
+                <input type="email_log" id="email_log" placeholder="Email" required>
+            </div>
+
+            <div class="log-in__password form_block">
+                <label for="password_log" class="input-label">password</label>
+                <input type="password" id="password_log" placeholder="Password" required>
+            </div>
+        </div>
+        <div class="form__buttonSubmit buttonSubmit">
+            <button class="buttonSubmit__log-in submit__button" id="submitBtn">Submit</button>
+        </div>
+        <div class="form__error" id="error"></div>
+    </form>
+</div>
+<script src="js/store.js"></script>
+<script src="js/index.js"></script>
+<script src="js_post/singIn_SingUp.js"></script>
+</body>
+</html>

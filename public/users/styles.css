@@ -5,7 +5,7 @@
 }
 
 body {
-    margin-top: 1em;
+    margin: 1em;
     font-size: 20px;
     color: #333333;
     height: 100vh;
@@ -47,7 +47,16 @@ h1 {
 .users__buttons {
     width: 10%;
 }
-
+users__button{
+    width: auto;
+    display: inline-block;
+}
+#usersTable, #chatTable{
+    width: 80%;
+}
+#chatTable{
+    display: none;
+}
 #chat {
     width: 100%;
 }
@@ -92,6 +101,12 @@ h1 {
 .incoming {
     padding: 5px;
     text-align: left;
+}
+.system-message {
+    text-align: center;
+    font-size: 18px;
+    padding: 5px;
+    color: green;
 }
 
 .chat__footer {

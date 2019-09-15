@@ -27,18 +27,18 @@ function signIn() {
         newUser.email = email.value;
         newUser.password = password.value;
 
-        let body = 'newUser=' + encodeURIComponent(JSON.stringify(newUser));
+        let body = 'user=' + encodeURIComponent(JSON.stringify(newUser));
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'text';
         xhr.open("POST", '/signInUser', true);
         xhr.onload = function () {
             let status = xhr.status;
             let jsonResponse = xhr.response;
-            if (status === 404) {
+            if (status === 409) {
                 alert(jsonResponse);
             } else if (status === 200) {
                 alert(jsonResponse);
-                location.href = 'index.html'
+                // location.href = 'index.html'
             }
         };
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -54,19 +54,19 @@ function signUp() {
         loginUser.email = email_log.value;
         loginUser.password = password_log.value;
 
-        let body = 'UserAuth=' + encodeURIComponent(JSON.stringify(loginUser));
+        let body = 'user=' + encodeURIComponent(JSON.stringify(loginUser));
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'text';
-        xhr.open("POST", '/signUpUser', true);
+        xhr.open("POST", '/auth', true);
         xhr.onload = function () {
             let status = xhr.status;
             let jsonResponse = xhr.response;
-            if (status === 404) {
+            if (status === 403) {
                 alert(jsonResponse);
             } else if (status === 200) {
                 setToStorage(jsonResponse);
                 alert('привет ' + jsonResponse);
-                location.href='users.html';
+                // location.href='users.html';
             }
         };
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -74,17 +74,17 @@ function signUp() {
     }
 }
 
-//вытащить всех юзеров
-function getAllUsers() {
-    // let body = 'newUser=' + encodeURIComponent(JSON.stringify(newUser));
-    const xhr = new XMLHttpRequest();
-    xhr.responseType = 'text';
-    xhr.open("POST", '/getUsers', true);
-    xhr.onload = function () {
-        let status = xhr.status;
-        let jsonResponse = xhr.response;
-        alert(jsonResponse);
-    };
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.send('body');
-}
+// //вытащить всех юзеров
+// function getAllUsers() {
+//     // let body = 'newUser=' + encodeURIComponent(JSON.stringify(newUser));
+//     const xhr = new XMLHttpRequest();
+//     xhr.responseType = 'text';
+//     xhr.open("POST", '/getUsers', true);
+//     xhr.onload = function () {
+//         let status = xhr.status;
+//         let jsonResponse = xhr.response;
+//         alert(jsonResponse);
+//     };
+//     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+//     xhr.send('body');
+// }

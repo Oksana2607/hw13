@@ -39,17 +39,26 @@ UsersDaoPostgresDB.prototype.initialize = function () {
 };
 
 UsersDaoPostgresDB.prototype.create = async function (object) {
-    this.pool.query('SELECT COUNT(*) FROM users WHERE email = $1', [object.email], (error, results) => {
-        //await validate(results);
-        this.pool.query(`INSERT INTO users (id, name, email, password) VALUES ('${uuidv1()}', '${object.name}', '${object.email}', '${object.password}')`, (error, results) => {
-           console.log('saved user', results);
-        })
-    })
-//    const user = this.model(object);
-//    await user.save();
-//    console.log('saved', user);
+    let validate = await this.pool.query('SELECT COUNT(*) FROM users WHERE email = $1', [object.email]);
+    if (validate.rows[0].count == 0){
+        await this.pool.query(`INSERT INTO users (id, name, email, password) VALUES ('${uuidv1()}', '${object.name}', '${object.email}', '${object.password}')`);
+    }
+    throw new Error('invalid email');
 };
 
-UsersDaoPostgresDB.prototype.validate = async function (object) {
-    //if object empty  == valid else throw Error('user is not valid');
-}
+UsersDaoPostgresDB.prototype.readUser = async function (email, password) {
+    let result =  await this.pool.query('SELECT name FROM users WHERE email = $1 AND password = $2', [email, password]);
+    if (result.rowCount > 0){
+        return result.rows[0].name;
+    }
+    throw new Error('invalid user');
+
+};
+
+
+// UsersDaoPostgresDB.prototype.validate = async function (object) {
+//     //if object empty  == valid else throw Error('user is not valid');
+//     console.log(object, 4)
+// };
+
+module.exports = UsersDaoPostgresDB;

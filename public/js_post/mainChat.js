@@ -175,11 +175,8 @@ class App {
                     document.getElementById('usersTable').style.display = 'block';
                     break;
                 case 'chatBtn':
-                    // this.view.renderChat();
-                    // this.initActiveUsers();
                     document.getElementById('usersTable').style.display = 'none';
                     document.getElementById('chatTable').style.display = 'block';
-                    // this.initWs();
                     break;
                 case 'sendBtn':
                     this.view.insertMessage();

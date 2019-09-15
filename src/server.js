@@ -1,15 +1,24 @@
 const socket = require('socket.io');
 const express = require('express');
+const app = express();
 const bodyParser = require('body-parser');
 const constants = require('./constants');
 const ChatDAL = require('./dal/chatDAL');
-const jsonParser = bodyParser.json();
-
-const app = express();
+const PORT = process.env.PORT || 80;
+//body parser
+app.use(
+    bodyParser.urlencoded({
+        extended: true
+    })
+);
+app.use(bodyParser.json());
+app.use(express.static(__dirname + "/public"));
 app.use(express.static('public'));
 app.use(express.json());
 
-const server = app.listen(3001);
+const server = app.listen(PORT, () => {
+    console.log('Listening on port %d', PORT);
+});
 const io = socket(server);
 
 const chatDal = new ChatDAL();
@@ -54,26 +63,27 @@ async function handleMessage(message) {
     io.sockets.emit(constants.MESSAGE, oneMessage);
 }
 
-app.post('/message', jsonParser, async (request, res) => {
+app.post('/message', async (request, res) => {
     await chatDal.createMessage(request.body);
     io.sockets.emit(constants.MESSAGE, request.body);
 
     res.status(200).send('OK');
 });
 
-app.post('/auth', jsonParser, async (request, res) => {
+app.post('/auth', async (request, res) => {
     try {
-        const { email, password } = request.body;
+        const { email, password } = JSON.parse(request.body.user);
         const user = await chatDal.readUser(email, password);
         res.status(200).send(user);
     } catch (e) {
+        console.log(e.message, 2);
         res.status(403).send(e.message);
     }
 });
 
-app.post('/signInUser', jsonParser, async (request, res) => {
+app.post('/signInUser', async (request, res) => {
     try {
-        await chatDal.createUser(request.body);
+        await chatDal.createUser(JSON.parse(request.body.user));
         res.status(200).send('OK');
     } catch (e) {
         res.status(409).send(e.message);

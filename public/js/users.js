@@ -1,12 +1,5 @@
 
 let ws;
-// const store = {
-//     user: '',
-//     // messages: '',
-//     allUsers: '',
-//     activeUsers: '',
-//     isActive: ''
-// };
 
 class View {
     constructor() {
@@ -30,32 +23,51 @@ class View {
     }
 
     renderUsers = (users) => {
-        console.log(users);
         const tableHeader = `<div class="users__table" id="usersTable">
                     <table class="users__table table" id="table">
-                        <tr class="table__header">
+                        <tr class="table__header"> 
+                            <th>Status</th>                      
                             <th>Name</th>
                             <th>Email</th>
+                            <th></th>
                         </tr>`;
-        const usersList = users.map(user => {
+        const usersListActive = users.filter(user => user.isActive === true);
+        const activeList = usersListActive.map(user => {
             return `<tr class="table__body">
+                            <td class="table__body-centred"><div class="table__body-statusActive"></div></td>                            
                             <td>${user.name}</td>
                             <td>${user.email}</td>
+                            <td><button id="${user._id}" class="private_chat" onclick="handleUserClick(id)">Private Chat</button></td>
+                        </tr>`
+        });
+
+        const usersListOffline = users.filter(user => user.isActive === false);
+        const offlineList = usersListOffline.map(user => {
+            return `<tr class="table__body">
+                            <td class="table__body-centred"><div class="table__body-statusOffline"></div></td>
+                            <td>${user.name}</td>
+                            <td>${user.email}</td>
+                            <td><button id="${user._id}" class="private_chat" onclick="handleUserClick(id)">Private Chat</button></td>
                         </tr>`
         });
 
         const tableFooter = `</table>
                 </div>`;
 
-        return this.changeTable.innerHTML = tableHeader + usersList.join('') + tableFooter;
+        return this.changeTable.innerHTML = tableHeader + activeList.join('') + offlineList.join('') + tableFooter;
     };
 
     renderChat = () => {
-        return this.changeTable.innerHTML = `<div class="users__chat chat" id="chat">
-                <div class="chat__title">Chat</div>
+        let chatTitle = 'Chat';
+        if (store._receiver_id) {
+            let receiver = store._allUsers.find(user => user._id === store._receiver_id);
+            console.log(receiver);
+            chatTitle += ` with ${receiver.name}`;
+        }
+        return this.changeTable.innerHTML = `<div class="users__chat chat" id="chat">    
+                <div class="chat__title">${chatTitle}</div>
                 <div class="chat__body" >
                     <div class="chat__content" id="chatContent">
-                        <div class="chat__content chat" id="chatContent"></div>
                     </div>
                     <div class="chat__footer">
                         <input class="chat__input" id="message" type="text">
@@ -82,22 +94,32 @@ class View {
     };
 
     insertMessage = () => {
-        let div = document.createElement('div');
+        const  chatContent = document.getElementById('chatContent');
+        const div = document.createElement('div');
         div.className = 'outgoing';
         div.innerHTML = document.getElementById('message').value;
-        document.getElementById('chatContent').appendChild(div);
+        chatContent.appendChild(div);
+        chatContent.scrollTop = chatContent.scrollHeight;
     };
 
     insertSocketMessage = message => {
-        let div = document.createElement('div');
+        const chatContent = document.getElementById('chatContent');
+        const div = document.createElement('div');
         div.className = 'incoming';
+
+        if (message.user === store._user.name) {
+            div.className = 'outgoing';
+        }
+
         if (message.user) {
             div.innerHTML = `${message.user}: ${message.text}`;
-            document.getElementById('chatContent').appendChild(div);
+            chatContent.appendChild(div);
         } else {
             div.innerHTML = message.text;
-            document.getElementById('chatContent').appendChild(div);
+            chatContent.appendChild(div);
         }
+
+        chatContent.scrollTop = chatContent.scrollHeight;
     }
 }
 
@@ -111,15 +133,10 @@ class App {
 
         if (_user !== 'null') {
             _user = JSON.parse(_user);
+            store.addUser(_user);
             this.view.name.innerHTML = _user.name;
             this.view.email.innerHTML = _user.email;
         }
-
-        // let _message = sessionStorage.getItem('message');
-        //
-        // if (_message !== 'null') {
-        //     _message = JSON.parse(_message);
-        // }
 
         this.initUsers();
 
@@ -130,22 +147,25 @@ class App {
                     this.initUsers();
                     break;
                 case 'chatBtn':
+                    store._receiver_id = '';
                     this.view.renderChat();
                     this.initActiveUsers();
+                    this.closeWs();
                     this.initWs();
                     break;
                 case 'sendBtn':
-                    this.view.insertMessage();
-                    let message = {
-                        type: "USER_MESSAGE",
-                        text: document.getElementById('message').value,
-                        user: _user.name,
-                        time: new Date()
-                    };
-                    sendMessage(message);
-                    document.getElementById('message').value = '';
+                        handleSendMessage();
                     break;
                 case 'logoutBtn':
+                    if (ws) {
+                        sendMessage({
+                            type: 'CLOSE',
+                            text: _user.name + ' left',
+                            time: new Date()
+                        });
+                        ws.close();
+                    }
+
                     sendLogoutRequest();
                     break;
                 default:
@@ -154,6 +174,12 @@ class App {
         };
 
         document.addEventListener('click', method);
+        document.addEventListener('keydown', event => {
+            if (event.target.id ==='message' && event.key === "Enter") {
+                handleSendMessage();
+            }
+        });
+
 
         window.onbeforeunload = function () {
             sendLogoutRequest();
@@ -179,8 +205,8 @@ class App {
         sendRequest('getActiveUsers')
             .then(res => res.json())
             .then(response => {
-                store._activeUsers = response;
-                this.view.renderChatUsers(store._activeUsers);
+                store.addActiveUsers(response);
+                this.view.renderChatUsers(store.getActiveUsers());
             })
             .catch(error => {
                 console.log(error);
@@ -189,7 +215,7 @@ class App {
 
     initWs() {
         ws = new WebSocket('ws://localhost:4000');
-        let _user = JSON.parse(sessionStorage.getItem('user'));
+        let _user = store._user;
         ws.onopen = () => {
             console.log('onopen');
             sendMessage({
@@ -205,12 +231,14 @@ class App {
 
         ws.onclose = () => {
             console.log('onclose');
-            sendMessage({
-                type: 'CLOSE',
-                text: _user.name + ' left',
-                time: new Date()
-            });
         };
+    }
+
+    closeWs() {
+        if(ws) {
+            ws.close();
+            ws = null;
+        }
     }
 }
 
@@ -229,11 +257,47 @@ const sendMessage = (data) => {
     ws.send(JSON.stringify(data));
 };
 
+const handleSendMessage = () => {
+    app.view.insertMessage();
+    let message = {
+        type: "USER_MESSAGE",
+        text: document.getElementById('message').value,
+        user: store._user.name,
+        time: new Date(),
+        user_id: store._user._id,
+        receiver_id: store._receiver_id
+    };
+    sendMessage(message);
+    document.getElementById('message').value = '';
+};
+
 const handleMessage = message => {
     let _message = JSON.parse(message.data);
-    console.log(_message);
-    store.addMessage(_message);
-    app.view.insertSocketMessage(_message);
+    if (checkMessages(_message)) {
+        store.addMessage(_message);
+        app.view.insertSocketMessage(_message);
+    }
+};
+
+const checkMessages = message => {
+    if (store._receiver_id) {
+        if (store._user._id === message.user_id && store._receiver_id === message.receiver_id) {
+            return true
+        }
+
+        if (store._user._id === message.receiver_id && store._receiver_id === message.user_id) {
+            return true
+        }
+
+        return false
+    } else {
+        if (message.receiver_id) {
+
+            return false;
+        } else {
+            return true;
+        }
+    }
 };
 
 const sendLogoutRequest = () => {
@@ -256,6 +320,15 @@ const sendLogoutRequest = () => {
             handleError(error);
         });
 };
+
+function handleUserClick(userId) {
+    console.log('userId', userId);
+    store._receiver_id = userId;
+    app.view.renderChat();
+    app.initActiveUsers();
+    app.closeWs();
+    app.initWs();
+}
 
 const store = new Store();
 const app = new App();

@@ -44,10 +44,33 @@ h1 {
     justify-content: space-between;
 }
 
+.table__body-statusActive {
+    background-color: green;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+}
+
+.table__body-statusOffline {
+    background-color: red;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+}
+
 .users__buttons {
     width: 10%;
 }
-
+users__button{
+    width: auto;
+    display: inline-block;
+}
+#usersTable, #chatTable{
+    width: 80%;
+}
+#chatTable{
+    display: none;
+}
 #chat {
     width: 100%;
 }
@@ -78,6 +101,7 @@ h1 {
 
 .chat__content {
     flex: 1;
+    height: 70vh;
     display: flex;
     flex-direction: column;
     padding: 10px 30px;
@@ -92,6 +116,12 @@ h1 {
 .incoming {
     padding: 5px;
     text-align: left;
+}
+.system-message {
+    text-align: center;
+    font-size: 18px;
+    padding: 5px;
+    color: green;
 }
 
 .chat__footer {
@@ -128,6 +158,22 @@ h1 {
     font-size: 20px;
     width: 6em;
     height: 2em;
+    cursor: pointer;
+}
+
+.private_chat {
+    text-align: center;
+    margin: 0.1em;
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+    border: solid 1px transparent;
+    border-radius: 4px;
+    color: #ffffff;
+    background-color: #46a6ac;
+    border-color: #46a6ac;
+    font-size: 15px;
+    width: 95%;
+    height: 2.3em;
     cursor: pointer;
 }
 
@@ -168,6 +214,10 @@ h1 {
 
 td, th {
     padding: 0.5em;
+}
+
+.table__body-centred {
+    padding-left: 35px;
 }
 
 .users-chat {

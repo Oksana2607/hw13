@@ -10,6 +10,12 @@ const Message = new Schema({
     },
     time: {
         type: Date
+    },
+    user_id: {
+        type: String
+    },
+    receiver_id: {
+        type: String
     }
 },{
     collection: 'messages'

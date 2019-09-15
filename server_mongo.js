@@ -36,15 +36,15 @@ const server = new WebSocket.Server({port: 4000}, () => {
 
 const handleMessage = (message, ws) => {
     const data = JSON.parse(message);
-
     const time = new Date();
-
+    console.log('handleMessage', data);
     switch (data.type) {
         case "USER_MESSAGE":
             server.broadcast(JSON.stringify({...data, time: time}), ws);
-
-            const message = new Message({...data});
-            message.save();
+            if (data.user_id) {
+                const message = new Message({...data});
+                message.save();
+            }
             break;
         case "CLOSE":
             server.broadcast(JSON.stringify({...data, time: time}), ws);
@@ -55,9 +55,9 @@ const handleMessage = (message, ws) => {
 };
 
 const handleOnConnect = ws => {
-    Message.find().sort({'time': -1}).limit(5).then(function (doc) {
+    Message.find().sort({time: -1}).limit(100).then(function (doc) {
         if (doc) {
-            doc.forEach(message => {
+            doc.reverse().forEach(message => {
                 ws.send(JSON.stringify(message));
             });
         }
@@ -87,13 +87,13 @@ server.on('connection', ws => {
         handleMessage(message, ws);
     });
 
-    ws.on('close', () => {
-        const message = JSON.stringify({
-            type: 'CLOSE',
-            text: `By!`,
-            time: new Date()
-        });
-
-        handleMessage(message, ws);
+    ws.on('close', ws => {
+        // const message = JSON.stringify({
+        //     type: 'CLOSE',
+        //     text: `By!`,
+        //     time: new Date()
+        // });
+        //
+        // handleMessage(message, ws);
     });
 });

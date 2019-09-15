@@ -7,7 +7,6 @@ UserRoute.route('/signIn').post((req, res) => {
     if (!req.body) {
         return res.sendStatus(400);
     }
-    console.log(req.body);
 
     const newUser = {
         ...req.body,
@@ -18,7 +17,8 @@ UserRoute.route('/signIn').post((req, res) => {
 
     const {email, password} = req.body;
 
-    User.findOne({email: email}, {password: password}).then(function (doc) {
+
+    User.findOne({email: email, password: password}).then(function (doc) {
         if (doc) {
             res.sendStatus(401);
         } else {
@@ -30,29 +30,7 @@ UserRoute.route('/signIn').post((req, res) => {
                     res.status(400).send("unable to save to database");
                 });
         }
-        console.log('findOne', doc);
     });
-
-    // if (result) {
-    //     res.json({message: 'User exist'})
-    // } else {
-    //     user.save()
-    //         .then(user => {
-    //             res.json(user);
-    //         })
-    //         .catch(err => {
-    //             res.status(400).send("unable to save to database");
-    //         });
-    // }
-
-
-    // user.save()
-    //     .then(user => {
-    //         res.json(user);
-    //     })
-    //     .catch(err => {
-    //         res.status(400).send("unable to save to database");
-    //     });
 });
 
 UserRoute.route('/login').post((req, res) => {
@@ -62,13 +40,12 @@ UserRoute.route('/login').post((req, res) => {
 
     const {email, password} = req.body;
 
-    User.findOneAndUpdate({email: email}, {isActive: true}).then(function (doc) {
+    User.findOneAndUpdate({email: email, password: password}, {isActive: true}).then(function (doc) {
         if (doc) {
             res.json(doc);
         } else {
             res.sendStatus(401);
         }
-        console.log('findAndUpdate', doc);
     });
 });
 
@@ -85,7 +62,6 @@ UserRoute.route('/logout').post((req, res) => {
         } else {
             res.sendStatus(401);
         }
-        console.log('findOneAndUpdate', doc);
     });
 });
 
@@ -98,7 +74,6 @@ UserRoute.route('/getActiveUsers').get((req, res) => {
         } else {
             res.sendStatus(401);
         }
-        console.log('find', doc);
     });
 });
 
@@ -109,7 +84,6 @@ UserRoute.route('/getUsers').get((req, res) => {
         } else {
             res.sendStatus(401);
         }
-        console.log('find', doc);
     });
 });
 

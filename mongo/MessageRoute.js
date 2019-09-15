@@ -7,7 +7,6 @@ MessageRoute.route('/message').post((req, res) => {
     if (!req.body) {
         return res.sendStatus(400);
     }
-    console.log(req.body);
 
     const message = new Message(req.body);
 
@@ -28,7 +27,6 @@ MessageRoute.route('/getMessages').get((req, res) => {
         } else {
             res.sendStatus(401);
         }
-        console.log('find', doc);
     });
 });
 

@@ -17,7 +17,6 @@ const sendRequest = () => {
     }).then(res => res.json())
         .then(response => {
             sessionStorage.setItem('user', JSON.stringify(response));
-            store.addUser(JSON.stringify(response));
             location.href='users.html';
         })
         .catch(error => {

@@ -1,10 +1,15 @@
 class Store {
     constructor() {
-        // this._user = {};
+        this._user = {};
         this._allUsers = [];
         this._activeUsers = [];
         this._isActive = '';
         this._messages = [];
+        this._receiver_id = '';
+    }
+
+    addUser(user) {
+        this._user = user;
     }
 
     addUsers(users) {
@@ -20,11 +25,12 @@ class Store {
         return this._allUsers;
     }
 
-    addActiveUser(user) {
-        this._activeUsers.push(user);
+    addActiveUsers(users) {
+        this._activeUsers = users;
     }
 
     getActiveUsers() {
         return this._activeUsers;
     }
 }
+

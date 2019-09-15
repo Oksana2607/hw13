@@ -35,10 +35,10 @@ function signIn() {
             let status = xhr.status;
             let jsonResponse = xhr.response;
             if (status === 409) {
-                alert(jsonResponse);
+                alert(jsonResponse + 'error');
             } else if (status === 200) {
-                alert(jsonResponse);
-                // location.href = 'index.html'
+                alert(jsonResponse + 'success');
+                location.href = 'index.html'
             }
         };
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -53,7 +53,7 @@ function signUp() {
         let loginUser = {};
         loginUser.email = email_log.value;
         loginUser.password = password_log.value;
-
+        console.log(loginUser);
         let body = 'user=' + encodeURIComponent(JSON.stringify(loginUser));
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'text';
@@ -61,12 +61,15 @@ function signUp() {
         xhr.onload = function () {
             let status = xhr.status;
             let jsonResponse = xhr.response;
+
             if (status === 403) {
+
                 alert(jsonResponse);
             } else if (status === 200) {
+
                 setToStorage(jsonResponse);
                 alert('привет ' + jsonResponse);
-                // location.href='users.html';
+                location.href='users.html';
             }
         };
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');

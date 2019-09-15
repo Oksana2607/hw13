@@ -10,22 +10,22 @@ function ChatDAL() {
     this.usersDAO = null;
 }
 ChatDAL.prototype.initialize = function () {
-    // this.messagesDAO = this.createMessagesDAO();
-    // this.messagesDAO.initialize();
+    this.messagesDAO = this.createMessagesDAO();
+    this.messagesDAO.initialize();
 
     this.usersDAO = this.createUsersDAO();
     this.usersDAO.initialize();
 };
-// ChatDAL.prototype.createMessagesDAO = function() {
-//     switch (config.databaseType) {
-//         case constants.MONGO:
-//             return new MessagesDaoMongoDB();
-//         case constants.POSTGRES:
-//             return new MessagesDaoPostgresDB();
-//         default:
-//             throw new Error('unknown databaseType');
-//     }
-// };
+ChatDAL.prototype.createMessagesDAO = function() {
+    switch (config.databaseType) {
+        case constants.MONGO:
+            return new MessagesDaoMongoDB();
+        case constants.POSTGRES:
+            return new MessagesDaoPostgresDB();
+        default:
+            throw new Error('unknown databaseType');
+    }
+};
 ChatDAL.prototype.createUsersDAO = function() {
     switch (config.databaseType) {
         case constants.MONGO:
@@ -36,8 +36,8 @@ ChatDAL.prototype.createUsersDAO = function() {
             throw new Error('unknown databaseType');
     }
 };
-ChatDAL.prototype.readPublicMessages = async function () {
-    return await this.messagesDAO.readByReceiver("ALL");
+ChatDAL.prototype.readPublicMessages = async function (ws) {
+    return await this.messagesDAO.readByReceiver(ws);
 };
 ChatDAL.prototype.readPrivateMessages = async function (sender, receiver) {
     return await this.messagesDAO.readBySenderAndReceiver(sender, receiver);

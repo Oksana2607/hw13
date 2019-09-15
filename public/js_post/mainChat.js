@@ -186,7 +186,7 @@ class App {
                         user: store.user.name,
                         time: new Date()
                     };
-                    console.log(message, 1);
+                    // console.log(message, 1);
                     sendMessage(message);
                     document.getElementById('message').value = '';
                     break;
@@ -207,7 +207,7 @@ class App {
     }
 
     initUsers() {
-        sendRequest('getUsers')
+        sendRequest('users')
             .then(res => res.json())
             .then(response => {
                 store.allUsers = response;
@@ -235,7 +235,7 @@ class App {
         ws = new WebSocket('ws://localhost:4000');
 
         ws.onopen = () => {
-            console.log('onopen');
+            // console.log('onopen');
             sendMessage({
                 type: 'USER_MESSAGE',
                 text: store.user.name + ' join',
@@ -250,7 +250,7 @@ class App {
         };
 
         ws.onclose = () => {
-            console.log('onclose');
+            // console.log('onclose');
             sendMessage({
                 type: 'CLOSE',
                 text: store.user.name + ' left',
@@ -262,7 +262,7 @@ class App {
 }
 
 function sendRequest(param) {
-    const url = `http://localhost:80/user/${param}`;
+    const url = `http://localhost:80/${param}`;
 
     return fetch(url, {
         method: 'post',

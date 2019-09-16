@@ -107,7 +107,7 @@ class View {
         const div = document.createElement('div');
         div.className = 'incoming';
 
-        if (message.type === "USER_MESSAGE"|| message.type === "CLOSE") {
+        if (!message.user) {
             div.className = 'system-message';
         }
 

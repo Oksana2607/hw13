@@ -15,7 +15,7 @@ const User = new Schema({
         type: Boolean
     }
 },{
-    collection: 'users'
+    collection: 'styles'
 });
 
 module.exports = mongoose.model('User', User);

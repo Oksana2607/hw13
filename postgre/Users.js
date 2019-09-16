@@ -9,7 +9,7 @@ const pool = new Pool({
 });
 
 const createUser = (newUser, response) => {
-    pool.query('SELECT COUNT(*) FROM users WHERE email = $1', [newUser.email], (error, results) => {
+    pool.query('SELECT COUNT(*) FROM styles WHERE email = $1', [newUser.email], (error, results) => {
         if (error) {
             response.status(400).json(error.name)
         } else if (results.rows[0].count > 0) {
@@ -33,7 +33,7 @@ const createUser = (newUser, response) => {
 
 const loginUser = (loginUser, response) => {
 
-    pool.query('SELECT name FROM users WHERE email = $1 AND password = $2', [loginUser.email, loginUser.password], (error, results) => {
+    pool.query('SELECT name FROM styles WHERE email = $1 AND password = $2', [loginUser.email, loginUser.password], (error, results) => {
         if (error) {
             console.log(error.name);
             response.status(400).json(error.name)
@@ -53,7 +53,7 @@ const loginUser = (loginUser, response) => {
 };
 
 const getAllUsers = (response) => {
-    pool.query('SELECT name, email FROM users', (error, results) => {
+    pool.query('SELECT name, email FROM styles', (error, results) => {
         if (error) {
             // console.log(error.name);
             response.status(400).json(error.name)

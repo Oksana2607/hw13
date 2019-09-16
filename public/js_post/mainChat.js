@@ -59,7 +59,7 @@ class View {
     }
 
     renderUsers = (users) => {
-        // console.log(users);
+        // console.log(styles);
         const tableHeader = `<div class="users__table">
                     <table class="users__table table" id="table">
                         <tr class="table__header">

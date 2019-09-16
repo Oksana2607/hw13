@@ -66,7 +66,7 @@ function signUp() {
             } else if (status === 200) {
                 setToStorage(jsonResponse);
                 alert('привет ' + jsonResponse);
-                location.href='users.html';
+                location.href='styles.html';
             }
         };
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');

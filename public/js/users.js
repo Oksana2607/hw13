@@ -107,6 +107,10 @@ class View {
         const div = document.createElement('div');
         div.className = 'incoming';
 
+        if (message.type === "USER_MESSAGE"|| message.type === "CLOSE") {
+            div.className = 'system-message';
+        }
+
         if (message.user === store._user.name) {
             div.className = 'outgoing';
         }
@@ -134,8 +138,8 @@ class App {
         if (_user !== 'null') {
             _user = JSON.parse(_user);
             store.addUser(_user);
-            this.view.name.innerHTML = _user.name;
-            this.view.email.innerHTML = _user.email;
+            this.view.name.innerHTML += _user.name;
+            this.view.email.innerHTML += _user.email;
         }
 
         this.initUsers();
@@ -165,7 +169,6 @@ class App {
                         });
                         ws.close();
                     }
-
                     sendLogoutRequest();
                     break;
                 default:
@@ -182,6 +185,14 @@ class App {
 
 
         window.onbeforeunload = function () {
+            if (ws) {
+                sendMessage({
+                    type: 'CLOSE',
+                    text: _user.name + ' left',
+                    time: new Date()
+                });
+                ws.close();
+            }
             sendLogoutRequest();
             this.view.renderChatUsers();
         };
